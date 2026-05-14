@@ -140,20 +140,24 @@ export const DataProvider = ({ children }) => {
         const finalUpdates = { ...updates };
         
         // Eğer shifts güncelleniyorsa, mevcut shifts ile birleştir
-        if (updates.shifts) {
-          const currentShifts = data.shifts || {};
-          const newShifts = { ...currentShifts };
-          
-          Object.keys(updates.shifts).forEach(userId => {
-            const val = updates.shifts[userId];
-            if (val === null || (typeof val === 'object' && val._methodName === 'deleteField')) {
-              delete newShifts[userId];
-            } else {
-              newShifts[userId] = val;
-            }
-          });
-          
-          finalUpdates.shifts = newShifts;
+        if (updates.shifts !== undefined) {
+          if (Object.keys(updates.shifts).length === 0) {
+            finalUpdates.shifts = {};
+          } else {
+            const currentShifts = data.shifts || {};
+            const newShifts = { ...currentShifts };
+            
+            Object.keys(updates.shifts).forEach(userId => {
+              const val = updates.shifts[userId];
+              if (val === null || (typeof val === 'object' && val._methodName === 'deleteField')) {
+                delete newShifts[userId];
+              } else {
+                newShifts[userId] = val;
+              }
+            });
+            
+            finalUpdates.shifts = newShifts;
+          }
         }
 
         if (!docSnap.exists()) {
