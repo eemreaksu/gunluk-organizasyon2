@@ -129,8 +129,12 @@ export default function Login() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <h2 className="text-3xl font-black text-gray-900 mb-2">Hoş Geldiniz</h2>
-            <p className="text-gray-500 font-medium mb-8">Lütfen hesabınıza giriş yapın.</p>
+            <div className="flex justify-between items-start mb-2">
+              <div>
+                <h2 className="text-3xl font-black text-gray-900">Hoş Geldiniz</h2>
+                <p className="text-gray-500 font-medium">Lütfen hesabınıza giriş yapın.</p>
+              </div>
+            </div>
 
             {error && (
               <div className="bg-red-50 text-red-600 border border-red-200 px-4 py-3 rounded-xl mb-6 text-sm font-bold flex items-center gap-2">
@@ -201,9 +205,11 @@ export default function Login() {
             </form>
             
             
-            <p className="text-center text-xs text-gray-400 mt-8 font-medium">
-              Sisteme erişim sorunu yaşıyorsanız yöneticinizle iletişime geçin.
-            </p>
+            <div className="mt-8 pt-6 border-t border-gray-100">
+              <p className="text-center text-xs text-gray-400 font-medium mb-4">
+                Sisteme erişim sorunu yaşıyorsanız yöneticinizle iletişime geçin.
+              </p>
+            </div>
           </motion.div>
         </div>
       </div>

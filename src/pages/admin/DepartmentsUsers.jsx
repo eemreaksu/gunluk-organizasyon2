@@ -25,23 +25,50 @@ export default function DepartmentsUsers() {
       return;
     }
 
+    const email = `${newUser.adSoyad.toLowerCase().replace(/\s+/g, '.')}@decathlon.com`;
+    const tempPassword = "Decathlon123!"; // Varsayılan geçici şifre
+
+    if (!window.confirm(`Yeni personel için şu giriş bilgileri oluşturulacak:\nE-posta: ${email}\nŞifre: ${tempPassword}\n\nOnaylıyor musunuz?`)) return;
+
     setUserLoading(true);
     try {
-      await addDoc(collection(db, 'users'), {
+      // Mevcut admin oturumunu bozmadan yeni kullanıcı oluşturmak için ikincil auth kullanıyoruz
+      const { initializeApp, getApp, getApps } = await import('firebase/app');
+      const { getAuth, createUserWithEmailAndPassword } = await import('firebase/auth');
+      
+      const config = {
+        apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+        authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+        projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+        storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+        messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+        appId: import.meta.env.VITE_FIREBASE_APP_ID
+      };
+
+      const secondaryApp = getApps().length > 1 ? getApp("Secondary") : initializeApp(config, "Secondary");
+      const secondaryAuth = getAuth(secondaryApp);
+
+      // 1. Auth hesabı oluştur
+      const userCred = await createUserWithEmailAndPassword(secondaryAuth, email, tempPassword);
+      
+      // 2. Firestore dokümanı oluştur (UID ile)
+      await setDoc(doc(db, 'users', userCred.user.uid), {
         adSoyad: newUser.adSoyad,
+        email: email,
         role: 'user',
         departman: newUser.departman,
         calismaTipi: newUser.calismaTipi,
         gorev: newUser.gorev
       });
-      alert("Personel başarıyla eklendi!");
+
+      alert(`Personel başarıyla eklendi!\nGiriş Bilgileri:\nE-posta: ${email}\nŞifre: ${tempPassword}`);
       setNewUser({
         ...newUser,
         adSoyad: ''
       });
     } catch (error) {
       console.error("Personel eklenirken hata:", error);
-      alert("Personel eklenemedi: " + error.message);
+      alert("Personel eklenemedi: " + (error.code === 'auth/email-already-in-use' ? "Bu isimle bir kullanıcı zaten var." : error.message));
     } finally {
       setUserLoading(false);
     }

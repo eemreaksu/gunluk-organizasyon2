@@ -31,33 +31,22 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
-    // Daily Organization data: 
-    // Admins have full access.
-    // Staff can read and update shifts, but NOT sensitive global stats or targets
-    match /dailyData/{dateId} {
+    // Daily Organization data: Staff (Admin/User) can read/write
+    match /dailyData/{document=**} {
       allow read: if isAuthenticated();
-      allow create: if isAdmin();
-      allow update: if isStaff() && (
-        // Admins can change anything
-        isAdmin() || 
-        // Staff can update but cannot change sensitive fields
-        (!request.resource.data.diff(resource.data).affectedKeys().hasAny([
-          'rekor', 'hedefCiro', 'gerceklesenCiro', 'manualTargets', 'manualAdet'
-        ]))
-      );
-      allow delete: if isAdmin();
+      allow write: if isStaff();
     }
 
-    // Captain Schedules: Staff (Admin/User) can read/write their organization
+    // Captain Schedules: Staff (Admin/User) can read/write
     match /captainSchedules/{document=**} {
       allow read: if isAuthenticated();
       allow write: if isStaff();
     }
 
-    // Productivity: Only Admins can set targets. Everyone else can only read.
+    // Productivity: Staff (Admin/User) can read/write
     match /productivity/{document=**} {
       allow read: if isAuthenticated();
-      allow write: if isAdmin();
+      allow write: if isStaff();
     }
 
     // Departments: Auth users can read, only Admins can write

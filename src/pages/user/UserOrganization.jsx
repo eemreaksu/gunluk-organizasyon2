@@ -23,6 +23,41 @@ import takimSporlariImg from '../../assets/gorsel/takim.jpg';
 import btwinImg from '../../assets/gorsel/bisiklet.jpg';
 import triathlonImg from '../../assets/gorsel/triathlon.jpg';
 
+const DebouncedInput = ({ value, onChange, isManual, type = 'ciro' }) => {
+  const [localVal, setLocalVal] = useState(value);
+
+  useEffect(() => {
+    setLocalVal(value);
+  }, [value]);
+
+  const handleBlur = () => {
+    if (localVal.toString() !== value.toString()) {
+      onChange(localVal.toString());
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.target.blur();
+    }
+  };
+
+  const className = type === 'ciro' 
+    ? `bg-white/5 border ${isManual ? 'border-[#c2ff00]' : 'border-white/10'} rounded px-2 py-1 text-right w-24 outline-none text-sm font-black ${isManual ? 'text-[#c2ff00]' : 'text-white'}`
+    : `bg-white/5 border ${isManual ? 'border-blue-400' : 'border-white/10'} rounded px-2 py-1 text-right w-24 outline-none text-sm font-black ${isManual ? 'text-blue-400' : 'text-[#c2ff00]'}`;
+
+  return (
+    <input 
+      type="text" 
+      value={localVal} 
+      onChange={(e) => setLocalVal(e.target.value)}
+      onBlur={handleBlur}
+      onKeyDown={handleKeyDown}
+      className={className}
+    />
+  );
+};
+
 export default function UserOrganization() {
   const { 
     users, 
@@ -547,14 +582,24 @@ export default function UserOrganization() {
                         <td className="p-4 align-middle text-right bg-black/10 text-white font-black">
                           {!isCapturing ? (
                             <div className="flex flex-col items-end">
-                              <input type="text" value={Math.round(dept.targetCiro)} onChange={(e) => handleManualTargetChange(dept.name, 'manualTargets', e.target.value)} className={`bg-white/5 border ${dept.isManualCiro ? 'border-[#c2ff00]' : 'border-white/10'} rounded px-2 py-1 text-right w-24 outline-none text-sm font-black ${dept.isManualCiro ? 'text-[#c2ff00]' : 'text-white'}`} />
+                              <DebouncedInput 
+                                value={Math.round(dept.targetCiro)} 
+                                onChange={(val) => handleManualTargetChange(dept.name, 'manualTargets', val)} 
+                                isManual={dept.isManualCiro} 
+                                type="ciro" 
+                              />
                             </div>
                           ) : <div className="text-xl">{Math.round(dept.targetCiro).toLocaleString('tr-TR')} ₺</div>}
                         </td>
                         <td className="p-4 align-middle text-right bg-black/20 text-[#c2ff00] font-black">
                           {!isCapturing ? (
                             <div className="flex flex-col items-end">
-                              <input type="text" value={Math.round(dept.targetAdet)} onChange={(e) => handleManualTargetChange(dept.name, 'manualAdet', e.target.value)} className={`bg-white/5 border ${dept.isManualAdet ? 'border-blue-400' : 'border-white/10'} rounded px-2 py-1 text-right w-24 outline-none text-sm font-black ${dept.isManualAdet ? 'text-blue-400' : 'text-[#c2ff00]'}`} />
+                              <DebouncedInput 
+                                value={Math.round(dept.targetAdet)} 
+                                onChange={(val) => handleManualTargetChange(dept.name, 'manualAdet', val)} 
+                                isManual={dept.isManualAdet} 
+                                type="adet" 
+                              />
                             </div>
                           ) : (
                             <div className="text-xl">
