@@ -25,16 +25,22 @@ import triathlonImg from '../../assets/gorsel/triathlon.jpg';
 
 const DebouncedInput = ({ value, onChange, isManual, type = 'ciro' }) => {
   const [localVal, setLocalVal] = useState(value);
+  const [isFocused, setIsFocused] = useState(false);
 
   useEffect(() => {
-    setLocalVal(value);
-  }, [value]);
+    if (!isFocused) {
+      setLocalVal(value);
+    }
+  }, [value, isFocused]);
 
   const handleBlur = () => {
+    setIsFocused(false);
     if (localVal.toString() !== value.toString()) {
       onChange(localVal.toString());
     }
   };
+
+  const handleFocus = () => setIsFocused(true);
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
@@ -52,6 +58,7 @@ const DebouncedInput = ({ value, onChange, isManual, type = 'ciro' }) => {
       value={localVal} 
       onChange={(e) => setLocalVal(e.target.value)}
       onBlur={handleBlur}
+      onFocus={handleFocus}
       onKeyDown={handleKeyDown}
       className={className}
     />
@@ -330,12 +337,14 @@ export default function DailyOrganization() {
     const targetPerHour = parseFloat(productivityTargets[getProductivityKey(dept)] || 10000);
     const calculatedCiro = deptHours * targetPerHour;
     const manualCiro = dailyData?.manualTargets?.[dept];
-    const deptTargetCiro = manualCiro ? parseFloat(manualCiro) : calculatedCiro;
+    const deptTargetCiro = (manualCiro !== undefined && manualCiro !== null) ? (manualCiro === "" ? 0 : parseFloat(manualCiro)) : calculatedCiro;
+    const isManualCiro = (manualCiro !== undefined && manualCiro !== null);
 
     const multiplier = getAdetMultiplier(dept);
     const calculatedAdet = (deptTargetCiro / 1000) * multiplier;
     const manualAdetValue = dailyData?.manualAdet?.[dept];
-    const deptTargetAdet = manualAdetValue ? parseFloat(manualAdetValue) : calculatedAdet;
+    const deptTargetAdet = (manualAdetValue !== undefined && manualAdetValue !== null) ? (manualAdetValue === "" ? 0 : parseFloat(manualAdetValue)) : calculatedAdet;
+    const isManualAdet = (manualAdetValue !== undefined && manualAdetValue !== null);
 
     totalStoreHours += deptHours;
     totalStoreTargetCiro += deptTargetCiro;
@@ -347,8 +356,8 @@ export default function DailyOrganization() {
       hours: deptHours, 
       targetCiro: deptTargetCiro, 
       targetAdet: deptTargetAdet,
-      isManualCiro: !!manualCiro,
-      isManualAdet: !!manualAdetValue
+      isManualCiro: isManualCiro,
+      isManualAdet: isManualAdet
     };
   });
 
@@ -387,14 +396,14 @@ export default function DailyOrganization() {
         <div ref={printableRef} className={`bg-[#1e2b6e] text-white p-6 md:p-10 space-y-10 shadow-2xl relative overflow-hidden ${isCapturing ? 'rounded-none' : 'rounded-3xl'}`}>
           {!isCapturing && <div className="absolute top-[-20%] right-[-10%] w-96 h-96 bg-[#c2ff00] rounded-full blur-[150px] opacity-10 pointer-events-none"></div>}
           
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10">
-            <div className="space-y-2">
-              <h1 className="text-4xl md:text-5xl font-black italic tracking-tighter uppercase leading-none text-white">GÜNLÜK ORGANİZASYON</h1>
+          <div className="flex flex-row flex-wrap justify-between items-start md:items-center gap-4 relative z-10">
+            <div className="space-y-1 md:space-y-2">
+              <h1 className="text-2xl sm:text-3xl md:text-5xl font-black italic tracking-tighter uppercase leading-none text-white">GÜNLÜK ORGANİZASYON</h1>
               <div className="flex items-center gap-2 text-blue-300 font-bold">
-                <MapPin className="w-5 h-5 text-[#c2ff00]" /><span className="tracking-widest uppercase text-sm">843 - MERSİN TURKSPORT</span>
+                <MapPin className="w-4 h-4 md:w-5 md:h-5 text-[#c2ff00]" /><span className="tracking-widest uppercase text-xs md:text-sm">843 - MERSİN TURKSPORT</span>
               </div>
             </div>
-            <div className="flex flex-col items-end gap-3 w-full md:w-auto">
+            <div className="flex flex-row md:flex-col items-center md:items-end gap-2 md:gap-3 w-full md:w-auto">
               <div className="bg-white/10 border border-white/10 px-4 py-2 rounded-lg flex items-center gap-3 shadow-lg">
                 <Trophy className="text-[#c2ff00] w-5 h-5" />
                 <div className="flex items-center gap-2">
@@ -429,7 +438,7 @@ export default function DailyOrganization() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 relative z-10">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 md:gap-4 relative z-10">
             {[
               { label: 'AÇILIŞ KAPTANI', id: dayCaptains.acilis_kaptani, color: 'bg-yellow-400' },
               { label: 'AÇILIŞ APRANTİSİ', id: dayCaptains.acilis_apranti, color: 'bg-yellow-200' },
@@ -448,7 +457,7 @@ export default function DailyOrganization() {
 
           <div className={`bg-white/5 border border-white/10 rounded-2xl backdrop-blur-sm shadow-2xl relative z-10 ${isCapturing ? 'overflow-visible' : 'overflow-hidden'}`}>
             <div className={isCapturing ? '' : 'overflow-x-auto'}>
-              <table className="w-full text-left border-collapse">
+              <table className="w-full text-left border-collapse min-w-[700px] md:min-w-[800px]">
                 <thead>
                   <tr className="bg-black/20 text-gray-400 text-[10px] font-black uppercase tracking-widest">
                     <th className="p-4">DEPARTMAN</th>
