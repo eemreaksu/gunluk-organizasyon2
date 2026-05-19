@@ -116,12 +116,6 @@ export default function DailyOrganization() {
   const isAutoUpdating = useRef(false);
 
   useEffect(() => {
-    if (dailyData?.rekor) {
-      setLocalRekor(dailyData.rekor);
-    } else {
-      setLocalRekor('');
-    }
-
     if (!loadingData && dayCaptains && !isAutoUpdating.current) {
       const roles = ['acilis_kaptani', 'acilis_apranti', 'kapanis_kaptani', 'kapanis_apranti'];
       const currentShifts = dailyData?.shifts || {};
@@ -157,7 +151,7 @@ export default function DailyOrganization() {
 
   // Rekorun sürekliliğini sağla
   useEffect(() => {
-    if (!loadingData) {
+    if (!loadingData && !isEditingRekor) {
       if (dailyData?.rekor) {
         setLocalRekor(dailyData.rekor);
       } else if (globalStats?.rekor) {
@@ -167,7 +161,7 @@ export default function DailyOrganization() {
         setLocalRekor('');
       }
     }
-  }, [dailyData?.rekor, globalStats?.rekor, loadingData]);
+  }, [dailyData?.rekor, globalStats?.rekor, loadingData, isEditingRekor]);
 
   const handleRekorChange = (val) => {
     let clean = val.replace(/[^0-9]/g, '');
