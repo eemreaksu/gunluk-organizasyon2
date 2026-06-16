@@ -67,24 +67,31 @@ export const DataProvider = ({ children }) => {
       setCaptainSchedules(data);
     });
 
-    const fetchLatestProductivity = async () => {
-      try {
-        const q = query(collection(db, 'productivity'), orderBy('__name__', 'desc'), limit(1));
-        const querySnapshot = await getDocs(q);
-        if (!querySnapshot.empty) {
-          setLatestProductivity(querySnapshot.docs[0].data());
+    const unsubscribeLatestProductivity = onSnapshot(doc(db, 'productivity', 'LATEST'), async (docSnap) => {
+      if (docSnap.exists()) {
+        setLatestProductivity(docSnap.data());
+      } else {
+        try {
+          // Fallback if LATEST doesn't exist yet
+          const q = query(collection(db, 'productivity'), orderBy('__name__', 'desc'), limit(1));
+          const querySnapshot = await getDocs(q);
+          const docs = querySnapshot.docs.filter(d => d.id !== 'LATEST');
+          if (docs.length > 0) {
+            setLatestProductivity(docs[0].data());
+          } else if (!querySnapshot.empty) {
+            setLatestProductivity(querySnapshot.docs[0].data());
+          }
+        } catch (error) {
+          console.error("Latest productivity fetch error:", error);
         }
-      } catch (error) {
-        console.error("Latest productivity fetch error:", error);
       }
-    };
-
-    fetchLatestProductivity();
+    });
 
     return () => {
       unsubscribeUsers();
       unsubscribeDeps();
       unsubscribeCaptainSchedules();
+      unsubscribeLatestProductivity();
     };
   }, [currentUser]);
 

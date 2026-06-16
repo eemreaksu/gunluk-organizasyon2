@@ -45,6 +45,7 @@ export default function Productivity() {
     setLoading(true);
     try {
       await setDoc(doc(db, 'productivity', selectedDate), localTargets);
+      await setDoc(doc(db, 'productivity', 'LATEST'), localTargets);
       setSaveStatus('success');
       setTimeout(() => setSaveStatus(null), 3000);
     } catch (error) {
