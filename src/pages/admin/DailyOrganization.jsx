@@ -391,17 +391,17 @@ export default function DailyOrganization() {
           {!isCapturing && <div className="absolute top-[-20%] right-[-10%] w-96 h-96 bg-[#c2ff00] rounded-full blur-[150px] opacity-10 pointer-events-none"></div>}
           
           <div className="flex flex-row flex-wrap justify-between items-start md:items-center gap-4 relative z-10">
-            <div className="space-y-1 md:space-y-2">
-              <h1 className="text-2xl sm:text-3xl md:text-5xl font-black italic tracking-tighter uppercase leading-none text-white">GÜNLÜK ORGANİZASYON</h1>
+            <div className="flex flex-col gap-2">
+              <h1 className="text-2xl sm:text-3xl md:text-5xl font-black italic tracking-tighter uppercase leading-tight text-white">GÜNLÜK ORGANİZASYON</h1>
               <div className="flex items-center gap-2 text-blue-300 font-bold">
-                <MapPin className="w-4 h-4 md:w-5 md:h-5 text-[#c2ff00]" /><span className="tracking-widest uppercase text-xs md:text-sm">843 - MERSİN TURKSPORT</span>
+                <MapPin className="w-4 h-4 md:w-5 md:h-5 text-[#c2ff00] shrink-0" /><span className="tracking-widest uppercase text-xs md:text-sm whitespace-nowrap">843 - MERSİN TURKSPORT</span>
               </div>
             </div>
-            <div className="flex flex-row md:flex-col items-center md:items-end gap-2 md:gap-3 w-full md:w-auto">
-              <div className="bg-white/10 border border-white/10 px-4 py-2 rounded-lg flex items-center gap-3 shadow-lg">
-                <Trophy className="text-[#c2ff00] w-5 h-5" />
+            <div className={`flex ${isCapturing ? 'flex-col items-end' : 'flex-row md:flex-col items-center md:items-end'} gap-2 md:gap-3 w-full md:w-auto`}>
+              <div className="bg-white/10 border border-white/10 px-4 py-2 rounded-lg flex items-center gap-3 shadow-lg whitespace-nowrap min-w-max">
+                <Trophy className="text-[#c2ff00] w-5 h-5 shrink-0" />
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">REKOR:</span>
+                  <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest shrink-0">REKOR:</span>
                   {!isCapturing ? (
                     <div className="flex items-center gap-2">
                       <input 
@@ -421,12 +421,12 @@ export default function DailyOrganization() {
                         </button>
                       )}
                     </div>
-                  ) : <span className="text-[#c2ff00] text-xl font-black">{localRekor || '0'}</span>}
+                  ) : <span className="text-[#c2ff00] text-xl font-black whitespace-nowrap shrink-0">{localRekor || '0'}</span>}
                 </div>
               </div>
-              <div className="bg-white/10 border border-white/10 px-4 py-2 rounded-lg flex items-center gap-3 shadow-lg relative">
-                <CalendarIcon className="text-[#c2ff00] w-5 h-5" />
-                <span className="text-[#c2ff00] text-sm font-black tracking-widest uppercase">{formattedDate}</span>
+              <div className="bg-white/10 border border-white/10 px-4 py-2 rounded-lg flex items-center gap-3 shadow-lg relative whitespace-nowrap min-w-max">
+                <CalendarIcon className="text-[#c2ff00] w-5 h-5 shrink-0" />
+                <span className="text-[#c2ff00] text-sm font-black tracking-widest uppercase whitespace-nowrap shrink-0">{formattedDate}</span>
                 {!isCapturing && <input type="date" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} className="absolute inset-0 opacity-0 cursor-pointer" />}
               </div>
             </div>
@@ -451,7 +451,7 @@ export default function DailyOrganization() {
 
           <div className={`bg-white/5 border border-white/10 rounded-2xl backdrop-blur-sm shadow-2xl relative z-10 ${isCapturing ? 'overflow-visible' : 'overflow-hidden'}`}>
             <div className={isCapturing ? '' : 'overflow-x-auto'}>
-              <table className="w-full text-left border-collapse min-w-[700px] md:min-w-[800px]">
+              <table className={`w-full text-left border-collapse ${isCapturing ? 'min-w-[1000px]' : 'min-w-[700px] md:min-w-[800px]'}`}>
                 <thead>
                   <tr className="bg-black/20 text-gray-400 text-[10px] font-black uppercase tracking-widest">
                     <th className="p-4">DEPARTMAN</th>
@@ -528,8 +528,8 @@ export default function DailyOrganization() {
                               return (
                                 <div key={uid} className="flex flex-col justify-center group h-14 border-b border-white/5 last:border-0 relative px-1">
                                   <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-1 overflow-hidden">
-                                      <span className="text-[13px] font-bold tracking-tight truncate">{u?.adSoyad}</span>
+                                    <div className={`flex items-center gap-1 ${isCapturing ? '' : 'overflow-hidden'}`}>
+                                      <span className={`text-[13px] font-bold tracking-tight ${isCapturing ? 'whitespace-nowrap' : 'truncate'}`}>{u?.adSoyad}</span>
                                       {isAK && <span className="text-[9px] bg-[#c2ff00] text-[#1e2b6e] px-1 rounded font-black shrink-0">AK</span>}
                                       {isKK && <span className="text-[9px] bg-blue-500 text-white px-1 rounded font-black shrink-0">KK</span>}
                                       {isAA && <span className="text-[9px] bg-yellow-200 text-[#1e2b6e] px-1 rounded font-black shrink-0">AA</span>}
