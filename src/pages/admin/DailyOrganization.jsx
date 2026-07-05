@@ -432,18 +432,18 @@ export default function DailyOrganization() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 md:gap-4 relative z-10">
+          <div className={`grid ${isCapturing ? 'grid-cols-4 gap-4' : 'grid-cols-2 lg:grid-cols-4 gap-2 md:gap-4'} relative z-10`}>
             {[
               { label: 'AÇILIŞ KAPTANI', id: dayCaptains.acilis_kaptani, color: 'bg-yellow-400' },
               { label: 'AÇILIŞ APRANTİSİ', id: dayCaptains.acilis_apranti, color: 'bg-yellow-200' },
               { label: 'KAPANIŞ KAPTANI', id: dayCaptains.kapanis_kaptani, color: 'bg-blue-400' },
               { label: 'KAPANIŞ APRANTİSİ', id: dayCaptains.kapanis_apranti, color: 'bg-blue-300' }
             ].map((c, idx) => (
-              <div key={idx} className="bg-white/5 border border-white/10 p-4 rounded-xl backdrop-blur-md flex items-center gap-4">
-                <div className={`w-4 h-4 rounded-full ${c.color} shadow-[0_0_10px_rgba(255,255,255,0.2)]`}></div>
-                <div>
-                  <p className="text-[9px] font-black text-gray-400 tracking-widest uppercase">{c.label}</p>
-                  <p className="font-bold text-sm tracking-tight text-white">{getCaptainName(c.id)}</p>
+              <div key={idx} className="bg-white/5 border border-white/10 p-3 md:p-4 rounded-xl backdrop-blur-md flex items-center gap-3 md:gap-4">
+                <div className={`w-3 h-3 md:w-4 md:h-4 shrink-0 rounded-full ${c.color} shadow-[0_0_10px_rgba(255,255,255,0.2)]`}></div>
+                <div className="flex flex-col min-w-0">
+                  <span className="text-[8px] md:text-[9px] font-black text-gray-400 tracking-widest uppercase whitespace-nowrap block leading-tight pb-0.5">{c.label}</span>
+                  <span className="font-bold text-xs md:text-sm tracking-tight text-white truncate block leading-tight">{getCaptainName(c.id)}</span>
                 </div>
               </div>
             ))}
