@@ -311,6 +311,20 @@ export default function DailyOrganization() {
                (targetDept === 'KOŞU/FITNESS' && userDept.includes('KOSU')) ||
                (targetDept === 'TRIATHLON//CRL' && userDept.includes('TRIATHLON'));
         return isMatch;
+      })
+      .sort(([uidA, shiftA], [uidB, shiftB]) => {
+        const startA = shiftA?.shiftStart || "23:59";
+        const startB = shiftB?.shiftStart || "23:59";
+        
+        if (startA !== startB) {
+          return startA.localeCompare(startB);
+        }
+
+        const userA = users.find(u => u.id === uidA);
+        const userB = users.find(u => u.id === uidB);
+        const nameA = userA?.adSoyad || "";
+        const nameB = userB?.adSoyad || "";
+        return nameA.localeCompare(nameB, 'tr');
       });
     
     let deptHours = 0;
